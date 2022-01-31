@@ -24,15 +24,6 @@ let baseMaps = {
   "Satellite": satelliteStreets
 };
 
-// Create the earthquake layer for our map.
-let earthquakes = new L.layerGroup();
-
-// We define an object that contains the overlays.
-// This overlay will be visible all the time.
-let overlays = {
-    Earthquakes: earthquakes
-  };
-
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
   center: [39.5, -98.5],
@@ -40,9 +31,8 @@ let map = L.map('mapid', {
   layers: [streets]
 });
 
-// Then we add a control to the map that will allow the user to change
-// which layers are visible.
-L.control.layers(baseMaps, overlays).addTo(map);
+// Pass our map layers into our layers control and add the layers control to the map.
+L.control.layers(baseMaps).addTo(map);
 
 // Accessing last 7 days earthquakes url
 let Earthquakes7days = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
@@ -108,41 +98,6 @@ d3.json(Earthquakes7days).then(function(data) {
     onEachFeature: function(feature, layer) {
     layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
   }
-    }).addTo(earthquakes);
-
-    // Adding Customizable legend
-
-    // Create a legend control object.
-    let legend = L.control({
-        position: 'bottomright'
-    });
-
-    // Then add all the details for the legend.
-    legend.onAdd = function () {
-    
-        let div = L.DomUtil.create('div', 'info legend'),
-            magnitudes  = [0, 1, 2, 3, 4, 5];
-            colors = [
-                "#98ee00",
-                "#d4ee00",
-                "#eecc00",
-                "#eeasdc",
-                "#ea2c2c"
-              ];
-    
-        // Looping through our intervals to generate a label with a colored square for each interval.
-        for (var i = 0; i < magnitudes.length; i++) {
-            console.log(colors[i]);
-            div.innerHTML +=
-                '<i style="background:' + colors[i] + '"></i> ' +
-                magnitudes[i] + (magnitudes[i + 1] ? '&ndash;' + magnitudes[i + 1] + '<br>' : '+');
-        }
-    
-        return div;
-    };
-    
-    legend.addTo(map);
-
-    // Then we add our earthquakes layer to the map
-    earthquakes.addTo(map);
+    }).addTo(map);
 });
+
